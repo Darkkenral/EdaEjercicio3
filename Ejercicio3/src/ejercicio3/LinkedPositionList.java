@@ -6,28 +6,30 @@
 package ejercicio3;
 
 import java.util.Iterator;
-import jdk.javadoc.internal.doclets.formats.html.markup.Head;
+import javax.xml.xpath.XPathConstants;
+import jdk.internal.jimage.ImageReader;
 import material.Position;
 
 /**
  *
  * @author miguel
+ * @param <E>
  */
 public class LinkedPositionList<E> implements MyListBetter<E> {
 
-    public class PositionNode<T> implements Position<T> {
+    public class PositionNode<E> implements Position<E> {
 
         private PositionNode prevNode;
-        private T element;
+        private E element;
         private PositionNode nextNode;
 
         @Override
-        public T getElement() {
+        public E getElement() {
             return element;
 
         }
 
-        public PositionNode(T element) {
+        public PositionNode(E element) {
             this.element = element;
         }
 
@@ -54,6 +56,7 @@ public class LinkedPositionList<E> implements MyListBetter<E> {
         }
 
     }
+
     private Position head;
     private Position tail;
     private int size;
@@ -72,38 +75,80 @@ public class LinkedPositionList<E> implements MyListBetter<E> {
 
     @Override
     public boolean isempty() {
-        if (size > 0) {
-            return false;
-        }
-        return true;
+        return size <= 0;
 
     }
 
     @Override
     public Position add(E value) {
-        Position node = new PositionNode(value);
+        Position node = null;
+        if (this.isempty()) {
+            node = isemptyadd(node, value);
+
+        } else {
+            node = new PositionNode((PositionNode) head, value, null);
+            this.head = node;
+
+        }
+        this.size++;
+        return node;
+
+    }
+
+    private Position isemptyadd(Position node, E value) {
+        node = new PositionNode(value);
         this.head = node;
         this.tail = node;
-        this.size++;
+        return node;
+    }
+
+    @Override
+    public Position<E> addAfter(Position<E> pos, E value) {
+        Position node = null;
+        if (this.isempty()) {
+            node = isemptyadd(node, value);
+        } else {
+            PositionNode actualNode = (PositionNode) pos;
+            PositionNode nextNode = actualNode.nextNode;
+            Position valueNode = new PositionNode(actualNode, value, nextNode);
+            actualNode.nextNode = (PositionNode) valueNode;
+            nextNode.prevNode = (PositionNode) valueNode;
+
+        }
 
         return node;
-        
-        
+
     }
 
     @Override
-    public Position addAfter(Position pos, ObObjectject value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Position<E> addBefore(Position<E> pos, E value) {
+        Position node = null;
+        if (this.isempty()) {
+            node = isemptyadd(node, value);
+        } else {
+            PositionNode actualNode = (PositionNode) pos;
+            PositionNode prevNode = actualNode.prevNode;
+            Position valueNode = new PositionNode(prevNode, value, actualNode);
+            actualNode.prevNode = (PositionNode) valueNode;
+            prevNode.nextNode = (PositionNode) valueNode;
+
+        }
+
+        return node;
     }
 
     @Override
-    public Position addBefore(Position pos, Object value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public E remove(Position pos) {
+        PositionNode toremoveNode = (PositionNode) pos;
+        PositionNode prevNode = toremoveNode.prevNode;
+        PositionNode nexNode = toremoveNode.nextNode;
 
-    @Override
-    public Object remove(Position pos) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        nexNode.prevNode = prevNode;
+        prevNode.nextNode = nexNode;
+        toremoveNode.nextNode = null;
+        toremoveNode.prevNode = null;
+        return (E) toremoveNode.getElement();
+
     }
 
     @Override
