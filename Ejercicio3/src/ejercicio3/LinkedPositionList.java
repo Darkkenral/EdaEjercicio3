@@ -153,12 +153,18 @@ public class LinkedPositionList<E> implements MyListBetter<E> {
 
     @Override
     public Position get() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        return this.head;
+
     }
 
+    
     @Override
     public Position set(Position pos, Object value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+          
+        
+        
+        
     }
 
     @Override
